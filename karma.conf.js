@@ -7,11 +7,10 @@ module.exports = function(config) {
 	config.set({
 		browsers: ['PhantomJS'],
 		frameworks: ['jasmine'],
-		files: ['src/**/*.js', 'test/**/*.spec.js'],
+		files: ['src/**/*.js', 'test/**/*.spec.js', 'test/adapter/MockAdapter.js'],
 		preprocessors: {
 			'src/**/*.js': ['babel'],
-			// uncomment to enable ES6 on tests too
-			// 'test/**/*.js': ['babel']
+			'test/adapter/MockAdapter.js': ['babel']
 		},
 		babelPreprocessor: {
 			options: babelOptions

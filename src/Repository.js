@@ -1,14 +1,13 @@
 class Repository {
-    __callAdapter(method, ...args) {
-        let options = args.pop();
-        let mergedOptions = mergeObjects(this.options, options);
-        args.push(mergedOptions);
-        args.unshift(this.name);
+    static create(config = {}) {
+        if (!config.name) {
+            throw new Error('Invalid repository name');
+        }
 
-        return this.adapter[method].apply(this.adapter, args);
-    }
+        if (!config.adapter) {
+            throw new Error('Invalid repository adapter');
+        }
 
-    static create(config) {
         let Constructor = function Repository() {
             this.name = config.name;
             this.adapter = config.adapter;
@@ -25,6 +24,16 @@ class Repository {
         });
 
         return Constructor;
+    }
+
+    __callAdapter(method, ...args) {
+        let options = args.pop() || {};
+        let mergedOptions = mergeObjects(this.options, options);
+
+        args.push(mergedOptions);
+        args.unshift(this.name);
+
+        return this.adapter[method].apply(this.adapter, args);
     }
 }
 

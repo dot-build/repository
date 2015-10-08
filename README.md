@@ -19,9 +19,9 @@ remove()
 removeAll()
 ```
 
-The repository provides just an interface to retrieve, modify or remove resources. However, the repository needs an implementation of this interface in order to actually do anything.
+The repository provides just an interface to retrieve, modify or remove resources. However, the repository needs an implementation of this interface in order to actually do these actions.
 
-That's where an Adapter comes in. Each repository instance must have an adapter with the implementation of the resource actions.
+That's where an Adapter comes in. Each repository instance must have an adapter attached to it, where the actual implementation of these methods is made.
 
 ## Usage
 

@@ -1,7 +1,7 @@
 {
 	"name": "repository",
 	"description": "A base class to structure the service layer in a resource-based architecture",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"main": "dist/repository.js",
 	"author": {
 		"name": "Darlan Alves",

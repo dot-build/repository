@@ -32,11 +32,6 @@ describe('Repository', function() {
             expect(Repo instanceof Repository).toBe(true);
         });
 
-        it('should have a copy of the config in each instance', function() {
-            createRepository();
-            expect(RepoConstructor.config).toBe(config);
-        });
-
         it('should throw an error if the repository name is invalid', function () {
             function test () {
                 Repository.create({
@@ -137,6 +132,28 @@ describe('Repository', function() {
 
             expect(MockAdapter.findAll).toHaveBeenCalledWith(config.name, entity, mergedOptions);
             expect(result).toBe(MockResponse);
+        });
+    });
+
+    describe('custom methods', function() {
+        it('should allow to create a repository with custom methods ignoring invalid methods', function () {
+            var customMethods = {
+                save: function invalidMethod() {},
+                other: function otherMethod() {}
+            };
+
+            var CustomRepository = Repository.create({
+                name: 'Custom',
+                adapter: MockAdapter,
+                methods: customMethods
+            });
+
+            var prototype = CustomRepository.prototype;
+
+            expect(prototype.other).toBe(customMethods.other);
+
+            // ignored method
+            expect(prototype.save).not.toBe(customMethods.save);
         });
     });
 });

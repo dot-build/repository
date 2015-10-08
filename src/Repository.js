@@ -1,3 +1,5 @@
+let repositoryMethods = ['find', 'remove', 'save', 'findAll', 'removeAll', 'saveAll'];
+
 class Repository {
     static create(config = {}) {
         if (!config.name) {
@@ -18,10 +20,14 @@ class Repository {
         prototype.constructor = Constructor;
 
         Constructor.prototype = prototype;
-        Object.defineProperty(Constructor, 'config', {
-            writable: false,
-            value: config
-        });
+
+        if (config.methods) {
+            Object.keys(config.methods).forEach(function addCustomMethod(method) {
+                if (repositoryMethods.indexOf(method) !== -1) return;
+
+                prototype[method] = config.methods[method];
+            });
+        }
 
         return Constructor;
     }
@@ -36,8 +42,6 @@ class Repository {
         return this.adapter[method].apply(this.adapter, args);
     }
 }
-
-let repositoryMethods = ['find', 'remove', 'save', 'findAll', 'removeAll', 'saveAll'];
 
 repositoryMethods.forEach(function addMethodToRepository(methodName) {
     Repository.prototype[methodName] = function(subject, options = {}) {

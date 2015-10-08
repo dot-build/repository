@@ -36,6 +36,30 @@ describe('Repository', function() {
             createRepository();
             expect(RepoConstructor.config).toBe(config);
         });
+
+        it('should throw an error if the repository name is invalid', function () {
+            function test () {
+                Repository.create({
+                    name: '',
+                    adapter: MockAdapter,
+                    options: {}
+                });
+            }
+
+            expect(test).toThrow(new Error('Invalid repository name'));
+        });
+
+        it('should throw an error if the repository adapter is invalid', function () {
+            function test () {
+                Repository.create({
+                    name: 'RepoTest',
+                    adapter: null,
+                    options: {}
+                });
+            }
+
+            expect(test).toThrow(new Error('Invalid repository adapter'));
+        });
     });
 
     describe('#save(entity, options)', function() {

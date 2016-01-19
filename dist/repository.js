@@ -6,31 +6,39 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var repositoryMethods = ['find', 'remove', 'save', 'findAll', 'removeAll', 'saveAll'];
-
 var Repository = (function () {
     function Repository() {
         _classCallCheck(this, Repository);
     }
 
     _createClass(Repository, [{
-        key: '__callAdapter',
-        value: function __callAdapter(method) {
-            for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-                args[_key - 1] = arguments[_key];
-            }
+        key: 'save',
+        value: function save(subject, options) {
+            return this.__call__('save', subject, options);
+        }
+    }, {
+        key: 'find',
+        value: function find(subject, options) {
+            return this.__call__('find', subject, options);
+        }
+    }, {
+        key: 'remove',
+        value: function remove(subject, options) {
+            return this.__call__('remove', subject, options);
+        }
+    }, {
+        key: '__call__',
+        value: function __call__(method, subject) {
+            var options = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
 
-            var options = args.pop() || {};
-            var mergedOptions = mergeObjects(this.options, options);
-
-            args.push(mergedOptions);
-            args.unshift(this.name);
+            var mergedOptions = mergeObjects({}, this.options, options);
+            var args = [this.name, subject, mergedOptions];
 
             return this.adapter[method].apply(this.adapter, args);
         }
     }], [{
-        key: 'create',
-        value: function create() {
+        key: 'new',
+        value: function _new() {
             var config = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
             if (!config.name) {
@@ -52,14 +60,6 @@ var Repository = (function () {
 
             Constructor.prototype = prototype;
 
-            if (config.methods) {
-                Object.keys(config.methods).forEach(function addCustomMethod(method) {
-                    if (repositoryMethods.indexOf(method) !== -1) return;
-
-                    prototype[method] = config.methods[method];
-                });
-            }
-
             return Constructor;
         }
     }]);
@@ -67,18 +67,17 @@ var Repository = (function () {
     return Repository;
 })();
 
-repositoryMethods.forEach(function addMethodToRepository(methodName) {
-    Repository.prototype[methodName] = function (subject) {
-        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+function mergeObjects(destination) {
+    for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        sources[_key - 1] = arguments[_key];
+    }
 
-        return this.__callAdapter(methodName, subject, options);
-    };
-});
-
-function mergeObjects(destination, source) {
-    Object.keys(source).forEach(function (key) {
-        return destination[key] = source[key];
+    sources.forEach(function (source) {
+        Object.keys(source).forEach(function (key) {
+            return destination[key] = source[key];
+        });
     });
+
     return destination;
 }
 

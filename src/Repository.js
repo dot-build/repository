@@ -1,7 +1,20 @@
-let repositoryMethods = ['find', 'remove', 'save', 'findAll', 'removeAll', 'saveAll'];
+'use strict';
 
 class Repository {
-    static create(config = {}) {
+
+    save(subject, options) {
+        return this.__call__('save', subject, options);
+    }
+
+    find(subject, options) {
+        return this.__call__('find', subject, options);
+    }
+
+    remove(subject, options) {
+        return this.__call__('remove', subject, options);
+    }
+
+    static new(config = {}) {
         if (!config.name) {
             throw new Error('Invalid repository name');
         }
@@ -21,35 +34,22 @@ class Repository {
 
         Constructor.prototype = prototype;
 
-        if (config.methods) {
-            Object.keys(config.methods).forEach(function addCustomMethod(method) {
-                if (repositoryMethods.indexOf(method) !== -1) return;
-
-                prototype[method] = config.methods[method];
-            });
-        }
-
         return Constructor;
     }
 
-    __callAdapter(method, ...args) {
-        let options = args.pop() || {};
-        let mergedOptions = mergeObjects(this.options, options);
-
-        args.push(mergedOptions);
-        args.unshift(this.name);
+    __call__(method, subject, options = {}) {
+        let mergedOptions = mergeObjects({}, this.options, options);
+        let args = [this.name, subject, mergedOptions];
 
         return this.adapter[method].apply(this.adapter, args);
     }
+
 }
 
-repositoryMethods.forEach(function addMethodToRepository(methodName) {
-    Repository.prototype[methodName] = function(subject, options = {}) {
-        return this.__callAdapter(methodName, subject, options);
-    };
-});
+function mergeObjects(destination, ...sources) {
+    sources.forEach(source => {
+        Object.keys(source).forEach((key) => destination[key] = source[key]);
+    });
 
-function mergeObjects(destination, source) {
-    Object.keys(source).forEach((key) => destination[key] = source[key]);
     return destination;
 }

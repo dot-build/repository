@@ -7,7 +7,7 @@
             return Repository;
         });
     } else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = Repository;
+        module.exports.Repository = Repository;
     } else {
         global.Repository = Repository;
     }
